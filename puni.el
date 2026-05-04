@@ -1669,6 +1669,8 @@ This respects the variable `delete-active-region'."
 With prefix argument N, kill that many words.  Negative argument
 means kill words backward."
   (interactive "p")
+  ;; Normalizd the argument for non-interactive calls.
+  (setq n (or n 1))
   (if (< n 0)
       (puni-backward-kill-word (- n))
     (dotimes (_ n)
@@ -1681,6 +1683,7 @@ means kill words backward."
 With prefix argument N, kill that many words.  Negative argument
 means kill words forward."
   (interactive "p")
+  (setq n (or n 1))
   (if (< n 0)
       (puni-forward-kill-word (- n))
     (dotimes (_ n)
@@ -1820,6 +1823,7 @@ jumps forward consecutive single-line comments.
 With prefix argument N, go forward that many sexps.  Negative
 argument means go backward."
   (interactive "^p")
+  (setq n (or n 1))
   (if (< n 0) (puni-backward-sexp (- n))
     (dotimes (_ n)
       (puni-strict-forward-sexp 'skip-single-line-comments))))
@@ -1833,6 +1837,7 @@ jumps backward consecutive single-line comments.
 With prefix argument N, go backward that many sexps.  Negative
 argument means go forward."
   (interactive "^p")
+  (setq n (or n 1))
   (if (< n 0) (puni-forward-sexp (- n))
     (dotimes (_ n)
       (puni-strict-backward-sexp 'skip-single-line-comments))))
@@ -1855,6 +1860,7 @@ argument means go backward."
 With prefix argument N, do this that many times.  Negative
 argument means go forward."
   (interactive "^p")
+  (setq n (or n 1))
   (if (< n 0) (puni-forward-sexp-or-up-list (- n))
     (dotimes (_ n)
       (or (puni-strict-backward-sexp 'skip-single-line-comments)
@@ -2058,12 +2064,12 @@ whole buffer is the list around point."
       (user-error "Active region is not balanced"))))
 
 ;;;###autoload
-(defun puni-contract-region (arg)
+(defun puni-contract-region (&optional arg)
   "Contract selected region by semantic units.
 When given a numeric prefix argument ARG, contract that many
 times."
   (interactive "p")
-
+  (setq arg (or arg 1))
   ;; To avoid unpredictable behaviour, reset history if the last
   ;; command was neither an expansion nor a contraction.
   (unless (memq last-command '(puni-expand-region
@@ -2232,6 +2238,7 @@ list, e.g.,
      ((|foo)) bar ;; Call `puni-slurp-backward'
   => ((|foo bar))"
   (interactive "p")
+  (setq n (or n 1))
   (when-let* ((end-of-list (puni-end-pos-of-list-around-point))
               ;; If the delimiter begins in its own line, we let the it include
               ;; the blanks and the newline char before it, so keyword
@@ -2280,6 +2287,7 @@ list, e.g.,
   "Move the closing delimiter of sexp around point backward one sexp.
 With positive prefix argument N, barf that many sexps."
   (interactive "p")
+  (setq n (or n 1))
   (when-let* ((from (point))
               (end-of-list (puni-end-pos-of-list-around-point))
               (beg-of-delim (save-excursion
@@ -2328,6 +2336,7 @@ list, e.g.,
      foo ((|bar)) ;; Call `puni-slurp-backward'
   => ((foo |bar))"
   (interactive "p")
+  (setq n (or n 1))
   (when-let* ((beg-of-list (puni-beginning-pos-of-list-around-point))
               (end-of-delim (save-excursion
                               (goto-char beg-of-list)
@@ -2377,6 +2386,7 @@ list, e.g.,
   "Move the opening delimiter of sexp around point forward one sexp.
 With positive prefix argument N, barf that many sexps."
   (interactive "p")
+  (setq n (or n 1))
   (when-let* ((from (point))
               (beg-of-list (puni-beginning-pos-of-list-around-point))
               (end-of-delim (save-excursion
